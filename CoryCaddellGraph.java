@@ -5,7 +5,7 @@ import java.util.List;
 public interface CoryCaddellGraph<V> {
 	
 	/** Return number of vertices in graph */
-	public int getsize();
+	public int getSize();
 	
 	/** Return the vertices in the graph */
 	public List<V> getVertices();
@@ -44,8 +44,22 @@ public interface CoryCaddellGraph<V> {
 	public boolean remove(int u, int v);
 	
 	/** Obtain a depth-first search tree */
-	public UnweightedGraph<V>.SearchTree dfs(int v);
+	public CoryCaddellUnweightedGraph<V>.SearchTree dfs(int v);
 	
 	/** Obtain a breadth-first search tree */
-	public UnweightedGraph<V>.SearchTree bfs(int v);
+	public CoryCaddellUnweightedGraph<V>.SearchTree bfs(int v);
+	
+	public class Edge {
+		int u;
+		int v;
+		
+		public Edge(int u, int v) {
+			this.u = u;
+			this.v = v;
+		}
+		
+		public boolean equals(Object o) {
+			return u == ((Edge)o).u && v == ((Edge)o).v;
+		}
+	}
 }
