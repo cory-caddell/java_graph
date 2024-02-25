@@ -4,7 +4,7 @@ import java.util.*;
 
 public class CoryCaddellUnweightedGraph<V> implements CoryCaddellGraph<V> {
 	
-	protected List<V> vertices = new ArrayList<>();	// Store vertices
+	protected List<V> vertices = new ArrayList<>();				// Store vertices
 	protected List<List<Edge>> neighbors = new ArrayList<>();	// Adjacency Edge lists
 	
 	/** Construct an empty graph */
@@ -103,7 +103,7 @@ public class CoryCaddellUnweightedGraph<V> implements CoryCaddellGraph<V> {
 	@Override
 	/** Print the edge */
 	public void printEdges() {
-		for (int u = 0; u < neighbors.size(); u++) {
+		for (int u = 0; u < neighbors.size() && u < getSize(); u++) {	// added "&& u < getSize()" in case there's less vertices than neighbor size
 			System.out.print(getVertex(u) + " (" + u + "): ");
 			for (Edge e: neighbors.get(u)) {
 				System.out.print("(" + getVertex(e.u) + ", " + 
@@ -297,12 +297,100 @@ public class CoryCaddellUnweightedGraph<V> implements CoryCaddellGraph<V> {
 	
 	@Override
 	public boolean remove(V v) {
-		return true;
+		if (vertices.contains(v)) {
+			
+			
+			// get index of v
+			int vertexIndex = vertices.indexOf(v);
+
+			// get neighbors of v
+			List<Integer> neighborList = getNeighbors(vertexIndex);
+			
+			// remove v from neighbors
+			for (Integer neighborIndex: neighborList) {
+				remove(vertexIndex, neighborIndex);
+				remove(neighborIndex,vertexIndex);
+			}
+			
+			// remove v from vertices
+			vertices.remove(v);
+			
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 	
 	@Override
 	public boolean remove(int u, int v) {
-		return true;
+		Edge e = new Edge(u, v);
+		
+		if (e.u < 0 || e.u > getSize() - 1) {
+			throw new IllegalArgumentException("No such index: " +
+					e.u);
+		}
+		
+		if (e.v < 0 || e.v > getSize() - 1) {
+			throw new IllegalArgumentException("No such index: " + 
+				e.v);
+		}
+		
+		if (neighbors.get(u).contains(e)) {
+			neighbors.get(u).remove(e);
+			return true;
+		}
+	
+		return false;
+
+	}
+		
+		
+	
+	public void CoryCaddellPrintGraph() {
+		List<Integer> neighborList;
+		
+		System.out.println("Number of Vertices: " + getSize());
+		
+		System.out.println("\nCities and their Neighbors: "
+						 + "\n---------------------------");
+		for (int i = 0; i < getSize(); i++) {
+			System.out.print(vertices.get(i) + ": ");
+			
+			neighborList = getNeighbors(i);
+			for (int j = 0; j < neighborList.size(); j++) {
+				System.out.print(((j + 1) > (neighborList.size() - 1)) ?
+						getVertex(neighborList.get(j)) :
+						getVertex(neighborList.get(j)) + ", ");			
+			}
+			System.out.println();
+		}
+				
+	}
+	
+	public void CoryCaddellPrintDepthFirst(V vertex) {
+		CoryCaddellUnweightedGraph<V>.SearchTree dfs = dfs(getIndex(vertex));
+		List<Integer> searchOrders = dfs.getSearchOrder();
+		
+		System.out.println("Printing in Depth First Order Beginning With: " + vertex
+					   + "\n--------------------------------------------------------");
+		for (int i = 0; i < searchOrders.size(); i++) {
+			System.out.println(getVertex(searchOrders.get(i)) + " ");
+		}
+		
+		
+		
+	}
+	
+	public void CoryCaddellPrintBreadthFirst(V vertex) {
+		CoryCaddellUnweightedGraph<V>.SearchTree bfs = bfs(getIndex(vertex));
+		List<Integer> searchOrders = bfs.getSearchOrder();
+		
+		System.out.println("Printing in Breadth First Order Beginning With: " + vertex
+					   + "\n--------------------------------------------------------");
+		for (int i = 0; i < searchOrders.size(); i++) {
+			System.out.println(getVertex(searchOrders.get(i)) + " ");
+		}
 	}
 
 }
